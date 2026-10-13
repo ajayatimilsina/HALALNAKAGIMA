@@ -72,7 +72,7 @@ async function place(){if(submitting)return;if(!f.name||!f.phone||!f.addr)return
  const c=calc(),items=menu.filter(m=>cart[m.id]).map(m=>({n:m.n,p:m.p,q:cart[m.id]}));
  const o={id:orders.reduce((a,o)=>Math.max(a,o.id),0)+1,t:Date.now(),c:{...f},items,total:c.total,ship:c.note,status:'new',pay:{method:f.method,status:'unpaid'}};
  submitting=true;draw();
- try{const response=await fetch('https://formsubmit.co/ajax/ajayatimilsina1@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({name:o.c.name,phone:o.c.phone,postal:o.c.postal,address:o.c.addr,note:o.c.note,payment:o.c.method,order_number:o.id,items:o.items.map(i=>`${i.n} x ${i.q} (${yen(i.p)})`).join('\n'),total:yen(o.total),shipping:o.ship,_subject:`New Halal Grocery order #${o.id}`,_template:'table'})});
+ try{const response=await fetch('https://formsubmit.co/ajax/94109621fd2b1ffb6d04596e918fd84b',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({name:o.c.name,phone:o.c.phone,postal:o.c.postal,address:o.c.addr,note:o.c.note,payment:o.c.method,order_number:o.id,items:o.items.map(i=>`${i.n} x ${i.q} (${yen(i.p)})`).join('\n'),total:yen(o.total),shipping:o.ship,_subject:`New Halal Grocery order #${o.id}`,_template:'table'})});
  const result=await response.json();if(!response.ok||result.success==='false')throw new Error(result.message||'Order email failed');
  orders.push(o);S('hh_o',orders);cart={};payId=o.id;draw()
  }catch(e){alert(lang=='ja'?'注文メールを送信できませんでした。通信を確認して再度お試しください。':'Could not email the order. Check your connection and try again.')}
