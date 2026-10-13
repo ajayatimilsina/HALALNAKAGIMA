@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halal Grocery | ハラール食品</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f3ec;--cd:#fff;--tx:#1d2b2a;--mu:#68767a;--ac:#0e6b57;--bd:#ddd5c6;--wn:#c0392b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121816;--cd:#1c2522;--tx:#ece9e1;--mu:#98a6a3;--ac:#4cc3a5;--bd:#34423e;--wn:#ef7b6d}}
+:root[data-theme="dark"]{--bg:#121816;--cd:#1c2522;--tx:#ece9e1;--mu:#98a6a3;--ac:#4cc3a5;--bd:#34423e;--wn:#ef7b6d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+header{display:flex;gap:6px;align-items:center;padding:10px 12px;background:var(--cd);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+header b{margin-right:auto}
+button,input,select{font:inherit;color:inherit;background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:7px 11px}
+button{cursor:pointer}button.p,header button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+button:disabled{opacity:.45}
+.hero{position:relative;color:#fff;padding:34px 16px;background:linear-gradient(rgba(10,25,40,.45),rgba(10,25,40,.7)),linear-gradient(180deg,#5b86b3 0%,#cfe0ee 55%,#fff 56%);display:flex;gap:16px;align-items:center}
+.hero svg{flex:none;width:90px;height:90px;border-radius:50%;background:#fff3;padding:6px;box-sizing:border-box}
+.hero h1{margin:0;font-size:22px}.hero p{margin:4px 0 8px}
+main{max-width:960px;margin:0 auto;padding:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.g .c{margin:0}.e{font-size:38px}.m{color:var(--mu)}.r{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0}
+.product-photo{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px}.admin-photo{width:42px;height:42px;object-fit:cover;vertical-align:middle;border-radius:4px}.photo-preview{display:block;width:120px;aspect-ratio:4/3;object-fit:cover;border-radius:4px;margin:6px 0}[hidden]{display:none!important}
+input{width:100%;box-sizing:border-box;margin:3px 0}.r input{width:auto}
+.tag{padding:2px 9px;border-radius:99px;font-size:12px;color:#fff;background:var(--ac)}.u{background:var(--wn)}
+.big{font-size:30px;font-weight:700}.qr svg{width:220px;height:220px;background:#fff;padding:8px;border-radius:8px}
+.out{opacity:.5}a.btn{display:inline-block;background:var(--ac);color:#fff;padding:9px 16px;border-radius:8px;text-decoration:none}
+@media print{header,.np{display:none}}
+</style></head><body>
+<header><b>🌙 Halal Grocery</b><span id="nv"></span><button onclick="setL(lang=='ja'?'en':'ja')">JA | EN</button></header>
+<div class="hero"><svg viewBox="0 0 90 90"><circle cx="45" cy="34" r="16" fill="#e8c4a0"/><path d="M14 86c2-24 16-30 31-30s29 6 31 30z" fill="#c0392b"/><path d="M27 30c2-18 34-18 36 0-6-8-30-8-36 0z" fill="#2a1a14"/></svg>
+<div><h1 id="h1"></h1><p id="h2"></p><button class="p np" onclick="go('qr')" id="sh"></button></div></div>
+<main id="app"></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+// NOTE: demo data lives in this browser only (localStorage). Real shared orders need the Firebase version.
+// The admin password is a front-end gate only, NOT real security.
+const L={ja:{shop:'ショップ',admin:'管理',qr:'共有QR',tag:'ネパール人が営むハラール食品店',sub:'スマホで注文・PayPay払い',share:'共有',cart:'カート',total:'合計',name:'お名前',phone:'電話',postal:'郵便番号',addr:'住所',note:'備考',pm:'お支払い方法',order:'注文する',out:'欠品',add:'追加',photo:'写真をアップロード',photoError:'画像を読み込めませんでした',fee:'送料',free:'送料無料',cod:'着払い（全国）',nag:'名古屋 送料',pay:'お支払い',send:'送金してください。メッセージに注文番号を入力してください。',open:'PayPayを開く',paid:'支払いました',rep:'支払い報告あり',unp:'未払い',ok:'支払い確認済み',confirm:'入金を確認',pw:'パスワード',login:'ログイン',orders:'注文',menu:'メニュー',none:'なし',rm:'削除',sold:'欠品にする',back:'販売再開',pp:'PayPay送金リンク',need:'必須項目を入力してください',pal:'準備中',url:'お店のアドレス',dl:'印刷',warn:'⚠ このアドレスはスマホでは開けません。先に公開してください。',scan:'スマホで読み取って注文',nn:'名前(日)',ne:'名前(EN)',ca:'カテゴリ(日)',ce:'カテゴリ(EN)',pr:'価格',st:{new:'新規',packing:'梱包中',shipped:'出荷済み',done:'完了'},nx:'次へ'},
+en:{shop:'Shop',admin:'Admin',qr:'Share QR',tag:'Nepali-run halal grocery in Japan',sub:'Order by phone, pay with PayPay',share:'Share',cart:'Cart',total:'Total',name:'Name',phone:'Phone',postal:'Postal code',addr:'Address',note:'Note',pm:'Payment method',order:'Place order',out:'Sold out',add:'Add',photo:'Upload photo',photoError:'Could not load the image',fee:'Shipping',free:'Free shipping',cod:'Cash on delivery (Japan)',nag:'Nagoya shipping',pay:'Payment',send:'Send the amount and put the order number in the message.',open:'Open PayPay',paid:'I have paid',rep:'Payment reported',unp:'Unpaid',ok:'Payment confirmed',confirm:'Confirm payment',pw:'Password',login:'Log in',orders:'Orders',menu:'Menu',none:'None',rm:'Remove',sold:'Mark sold out',back:'Back on sale',pp:'PayPay link',need:'Please fill in the required fields',pal:'coming soon',url:'Shop address',dl:'Print',warn:'⚠ Phones cannot open this address. Publish the site first.',scan:'Scan to order',nn:'Name (JA)',ne:'Name (EN)',ca:'Category (JA)',ce:'Category (EN)',pr:'Price',st:{new:'New',packing:'Packing',shipped:'Shipped',done:'Done'},nx:'Next'}};
+const J=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let lang='ja';try{lang=localStorage.getItem('hh_l')||'ja'}catch(e){}
+const t=k=>L[lang][k]||k, esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const yen=n=>'¥'+Math.round(n).toLocaleString();
+const nm=m=>lang=='en'&&m.nEn?m.nEn:m.n, ct=m=>lang=='en'&&m.catEn?m.catEn:m.cat;
+let menu=J('hh_m',[{id:1,cat:'ミート',catEn:'Meat',n:'ラム肉',nEn:'Mutton meat',p:1500,e:'🍖'},{id:2,cat:'ミート',catEn:'Meat',n:'ハラール鶏肉',nEn:'Halal chicken',p:900,e:'🍗'},{id:3,cat:'米・豆',catEn:'Rice & lentils',n:'バスマティ米 5kg',nEn:'Basmati rice 5kg',p:2800,e:'🍚'},{id:4,cat:'米・豆',catEn:'Rice & lentils',n:'マスールダル 1kg',nEn:'Masoor dal 1kg',p:700,e:'🫘'},{id:5,cat:'スパイス',catEn:'Spices',n:'ガラムマサラ',nEn:'Garam masala',p:450,e:'🌶️'}]);
+let orders=J('hh_o',[]),cfg=J('hh_s',{payUrl:'https://qr.paypay.ne.jp/p2p01_M2QLOAUSh8VcxFGt'});
+let view='shop',cart={},payId=null,authed=false,tab='orders',qbase=location.href.split('#')[0].split('?')[0];
+try{authed=sessionStorage.getItem('hh_a')=='1'}catch(e){}
+let f={name:'',phone:'',postal:'',addr:'',note:'',method:'PayPay'},nf={};
+const go=v=>{view=v;payId=null;draw()};
+function setL(l){lang=l;try{localStorage.setItem('hh_l',l)}catch(e){}draw()}
+function qrSvg(u){const q=qrcode(0,'M');q.addData(u);q.make();return q.createSvgTag(4)}
+function draw(){
+ document.documentElement.lang=lang;
+ h1.textContent='Halal Grocery｜ハラール食品';h2.textContent=t('tag')+' · '+t('sub');sh.textContent=t('share');
+ nv.innerHTML=['shop','admin','qr'].map(v=>`<button class="${v==view?'on':''}" onclick="go('${v}')">${t(v)}</button>`).join(' ');
+ app.innerHTML=payId?payV():({shop,admin,qr})[view]();
+ document.querySelectorAll('[data-qr]').forEach(d=>d.innerHTML=qrSvg(d.dataset.qr));
+}
+// shipping: Nagoya (postal 450-468 or address text) free from ¥10,000, otherwise carrier collect
+const nagoya=f=>/名古屋|nagoya/i.test(f.addr)||(+String(f.postal).replace(/\D/g,'').slice(0,3)>=450&&+String(f.postal).replace(/\D/g,'').slice(0,3)<=468);
+function calc(){const sub=menu.reduce((s,m)=>s+m.p*(cart[m.id]||0),0),n=nagoya(f);return{sub,n,fee:0,total:sub,note:n?(sub>=10000?t('free'):t('nag')+' ¥0'):t('cod')}}
+function shop(){
+ const cats=[...new Set(menu.map(m=>m.cat))],c=calc(),cnt=Object.values(cart).reduce((a,b)=>a+b,0),i=(k,l,x='')=>`<input placeholder="${t(l)}" value="${esc(f[k])}" oninput="f.${k}=this.value" ${x}>`;
+ return cats.map(k=>{const ms=menu.filter(m=>m.cat==k);return `<h3>${esc(ct(ms[0]))}</h3><div class="g">${ms.map(m=>`<div class="c ${m.out?'out':''}"><div class="e">${m.photo?`<img class="product-photo" src="${esc(m.photo)}" alt="${esc(nm(m))}">`:esc(m.e||'🛒')}</div><b>${esc(nm(m))}</b><div class="m">${yen(m.p)}</div>${m.out?`<b>${t('out')}</b>`:`<div class="r"><button onclick="q(${m.id},-1)">−</button><b>${cart[m.id]||0}</b><button onclick="q(${m.id},1)">+</button></div>`}</div>`).join('')}</div>`}).join('')+
+ `<h3>${t('cart')}</h3><div class="c">${i('name','name')}${i('phone','phone','type="tel"')}${i('postal','postal','onchange="draw()"')}${i('addr','addr','onchange="draw()"')}${i('note','note')}
+ <div class="r"><span>${t('pm')}</span><select onchange="f.method=this.value"><option ${f.method=='PayPay'?'selected':''}>PayPay</option><option disabled>PayPal (${t('pal')})</option></select></div><hr>
+ <div class="r"><span>${t('fee')}</span><span>${c.note}</span></div><div class="r"><b>${t('total')}</b><b class="big">${yen(c.total)}</b></div><button class="p" ${cnt?'':'disabled'} onclick="place()">${t('order')}</button></div>`}
+function q(id,d){cart[id]=Math.max(0,(cart[id]||0)+d);draw()}
+function place(){if(!f.name||!f.phone||!f.addr)return alert(t('need'));
+ const c=calc(),items=menu.filter(m=>cart[m.id]).map(m=>({n:m.n,p:m.p,q:cart[m.id]}));
+ const o={id:orders.reduce((a,o)=>Math.max(a,o.id),0)+1,t:Date.now(),c:{...f},items,total:c.total,ship:c.note,status:'new',pay:{method:f.method,status:'unpaid'}};
+ orders.push(o);S('hh_o',orders);cart={};payId=o.id;draw()}
+function payV(){const o=orders.find(x=>x.id==payId);return `<div class="c" style="text-align:center"><h2>${t('pay')} #${o.id}</h2><div class="big">${yen(o.total)}</div><p>PayPay: ${yen(o.total)} — ${t('send')} #${o.id}</p><div class="qr" data-qr="${esc(cfg.payUrl)}"></div><p><a class="btn" href="${esc(cfg.payUrl)}">${t('open')}</a></p><button class="p" ${o.pay.status!='unpaid'?'disabled':''} onclick="rep(${o.id})">${o.pay.status=='unpaid'?t('paid'):t('rep')}</button> <button onclick="go('shop')">${t('shop')}</button></div>`}
+function rep(id){orders.find(o=>o.id==id).pay.status='reported';S('hh_o',orders);draw()}
+// admin
+async function login(){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw.value)),h=[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+ if(h=='03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'){authed=true;try{sessionStorage.setItem('hh_a','1')}catch(e){}draw()}else alert('×')}
+const NX={new:'packing',packing:'shipped',shipped:'done'},tg=p=>p.status=='paid'?['ok','']:p.status=='reported'?['rep','']:['unp','u'];
+function admin(){
+ if(!authed)return `<div class="c"><input id="pw" type="password" placeholder="${t('pw')}"><button class="p" onclick="login()">${t('login')}</button></div>`;
+ const tb=['orders','menu'].map(k=>`<button class="${k==tab?'p':''}" onclick="tab='${k}';draw()">${t(k)}</button>`).join(' ');
+ let b='';
+ if(tab=='orders')b=[...orders].reverse().map(o=>{const[g,cl]=tg(o.pay);return `<div class="c"><div class="r"><b>#${o.id} ${esc(o.c.name)}</b><span><span class="tag ${cl}">${t(g)}</span> <span class="tag">${t('st')[o.status]}</span></span></div><div class="m">${esc(o.c.phone)} · ${esc(o.c.postal)} ${esc(o.c.addr)}<br>${o.items.map(i=>esc(i.n)+'×'+i.q).join(', ')}<br>${yen(o.total)} · ${esc(o.ship)} · ${esc(o.pay.method)}</div><div class="r">${o.pay.status!='paid'?`<button onclick="cf(${o.id})">${t('confirm')}</button>`:''}${NX[o.status]?`<button class="p" onclick="nx(${o.id})">→ ${t('st')[NX[o.status]]}</button>`:''}<button onclick="window.print()">${t('dl')}</button></div></div>`}).join('')||'<p class="m">—</p>';
+ else b=menu.map(m=>`<div class="c r"><span>${m.photo?`<img class="admin-photo" src="${esc(m.photo)}" alt="">`:esc(m.e)} ${esc(m.n)} / ${esc(m.nEn)} · ${yen(m.p)}</span><span><button onclick="so(${m.id})">${m.out?t('back'):t('sold')}</button> <button onclick="rmI(${m.id})">${t('rm')}</button></span></div>`).join('')+
+ `<div class="c">${[['n','nn'],['nEn','ne'],['cat','ca'],['catEn','ce'],['p','pr'],['e','e']].map(([k,l])=>`<input placeholder="${t(l)==l?'Emoji':t(l)}" value="${esc(nf[k]||'')}" oninput="nf.${k}=this.value">`).join('')}<label>${t('photo')}<input type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadPhoto(this)"></label><img id="photoPreview" class="photo-preview" alt="" hidden><button class="p" onclick="addI()">${t('add')}</button></div><div class="c"><div class="m">${t('pp')}</div><input value="${esc(cfg.payUrl)}" onchange="cfg.payUrl=this.value.trim();S('hh_s',cfg)"></div>`;
+ return tb+'<br><br>'+b}
+function cf(id){const o=orders.find(x=>x.id==id);o.pay.status='paid';o.pay.paidAt=Date.now();S('hh_o',orders);draw()}
+function nx(id){const o=orders.find(x=>x.id==id);o.status=NX[o.status];S('hh_o',orders);draw()}
+function so(id){const m=menu.find(x=>x.id==id);m.out=!m.out;S('hh_m',menu);draw()}
+function rmI(id){menu=menu.filter(m=>m.id!=id);S('hh_m',menu);draw()}
+async function uploadPhoto(input){const file=input.files[0];if(!file)return;
+ try{const bitmap=await createImageBitmap(file),scale=Math.min(1,800/Math.max(bitmap.width,bitmap.height)),canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();nf.photo=canvas.toDataURL('image/jpeg',.78);const preview=document.getElementById('photoPreview');preview.src=nf.photo;preview.hidden=false}
+ catch(e){nf.photo='';input.value='';alert(t('photoError'))}}
+function addI(){if(!nf.n||!nf.cat||!(+nf.p>=0)||nf.p==='')return alert(t('need'));
+ menu.push({id:menu.reduce((a,m)=>Math.max(a,m.id),0)+1,n:nf.n,nEn:nf.nEn||'',cat:nf.cat,catEn:nf.catEn||'',p:+nf.p,e:nf.e||'🛒',photo:nf.photo||''});S('hh_m',menu);nf={};draw()}
+// share QR
+function qr(){return `<div class="c" style="text-align:center"><h2>${t('scan')}</h2><div class="qr" data-qr="${esc(qbase)}"></div><div class="np"><div class="m">${t('url')}</div><input value="${esc(qbase)}" onchange="qbase=this.value.trim();draw()">${/^(file|blob|about)|localhost/i.test(qbase)?`<p style="color:var(--wn)">${t('warn')}</p>`:''}<button class="p" onclick="window.print()">${t('dl')}</button></div></div>`}
+draw();
+</script></body></html>
